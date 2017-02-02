@@ -3,6 +3,8 @@ const cli = require("commander")
 const child = require('child_process')
 const pkgJson = require(__dirname + '/package.json');
 
+const devtoolsPath = __dirname + '/devtools.js';
+
 var fromAscii = function(str) {
     var hex = "";
     for(var i = 0; i < str.length; i++) {
@@ -16,14 +18,13 @@ var fromAscii = function(str) {
 
 cli.version(pkgJson.version);
 
-// status-dev-cli add-dapp http://localhost:8545 "0x047fdcea8e559e251211b43731acd951e1ae698e43b7e330a14881b2c6e7a34c5e3397bb8ff06109df59171b369872c36adbdb7b34667cfa71a5f7c1910b4d9097" '{"name": "DAPP", "whisper-identity": "dapp-dapp-dapp", "dapp-url": "http://google.com"}'
 cli.command("add-dapp <attach_to> <public_key> <dapp>")
     .description("Adds a DApp to contacts and chats")
     .action(function (attachTo, publicKey, dapp) {
         dapp = fromAscii(dapp);
         child.execSync(
             "geth --exec '" +
-            "loadScript(\"devtools.js\");" +
+            "loadScript(\"" + devtoolsPath + "\");" +
             "status.addDApp(\"" + publicKey + "\", \"" + dapp + "\");'" +
             " " +
             "attach " + attachTo
@@ -36,7 +37,7 @@ cli.command("remove-dapp <attach_to> <public_key> <dapp_identity>")
         dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
         child.execSync(
             "geth --exec '" +
-            "loadScript(\"devtools.js\");" +
+            "loadScript(\"" + devtoolsPath + "\");" +
             "status.removeDApp(\"" + publicKey + "\", \"" + dapp + "\");'" +
             " " +
             "attach " + attachTo
