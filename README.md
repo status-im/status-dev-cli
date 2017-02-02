@@ -52,7 +52,7 @@ Example:
 ./status-dev-cli remove-dapp http://localhost:8545 "0x04..." "dapp-test"
 ```
 
-### Watching for DApp changes and updating it automatically
+### Watching for DApp changes and refreshing DApp automatically
 
 `./status-dev-cli watch-dapp <attach_to> <public_key> <dapp_identity> <dapp_dir>`
 
@@ -66,5 +66,3 @@ Example:
 ```
 ./status-dev-cli watch-dapp http://localhost:8545 "0x04..." "dapp-test" ~/Documents/DApps/dapp-test/
 ```
-
-

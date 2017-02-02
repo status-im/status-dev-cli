@@ -30,5 +30,3 @@ var status = {
         return "Notification sent";
     }
 };
-
-// geth --exec 'loadScript("devtools.js"); status.addDApp(contact, {"name": "DApp wow", "dapp-url": "http://google.com/", "whisper-identity": "dapp-google-wow"})' attach http://localhost:8545
