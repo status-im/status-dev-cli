@@ -7,8 +7,9 @@ Additional tools for DApps developers. These tools allows to speed up the proces
 ## Requirements
 
 1. Geth (https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum);
-2. Node.js
-3. NPM
+2. Node.js;
+3. NPM;
+4. Watchman (https://facebook.github.io/watchman/docs/install.html).
 
 ## Installing standalone
 
@@ -39,7 +40,7 @@ Example:
 
 ### Removing DApp
 
-`./status-dev-cli add-dapp <attach_to> <public_key> <dapp_identity>`
+`./status-dev-cli remove-dapp <attach_to> <public_key> <dapp_identity>`
 
 * `attach_to` — Geth endpoint;
 * `public_key` — Public key of your user (you can find it in your profile);
@@ -50,3 +51,20 @@ Example:
 ```
 ./status-dev-cli remove-dapp http://localhost:8545 "0x04..." "dapp-test"
 ```
+
+### Watching for DApp changes and updating it automatically
+
+`./status-dev-cli watch-dapp <attach_to> <public_key> <dapp_identity> <dapp_dir>`
+
+* `attach_to` — Geth endpoint;
+* `public_key` — Public key of your user (you can find it in your profile);
+* `dapp_identity` — `whisper-identity` of your DApp;
+* `dapp_dir` — dir that should be observed.
+
+Example:
+
+```
+./status-dev-cli watch-dapp http://localhost:8545 "0x04..." "dapp-test" ~/Documents/DApps/dapp-test/
+```
+
+

@@ -9,6 +9,7 @@
   "author": "Status.im",
   "license": "MPL-2.0",
   "dependencies": {
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "fb-watchman": "^2.0.0"
   }
 }

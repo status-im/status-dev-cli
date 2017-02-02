@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 const cli = require("commander")
 const child = require('child_process')
-const pkgJson = require(__dirname + '/package.json');
+const watchman = require('fb-watchman');
 
+const pkgJson = require(__dirname + '/package.json');
 const devtoolsPath = __dirname + '/devtools.js';
 
-var fromAscii = function(str) {
+var client = new watchman.Client();
+
+function fromAscii(str) {
     var hex = "";
     for(var i = 0; i < str.length; i++) {
         var code = str.charCodeAt(i);
@@ -15,6 +18,42 @@ var fromAscii = function(str) {
 
     return "0x" + hex;
 };
+
+function makeSubscription(client, watch, relativePath, attachTo, publicKey, dapp) {
+    sub = {
+        expression: ["allof", ["match", "*.*"]],
+        fields: ["name"]
+    };
+    if (relativePath) {
+        sub.relative_root = relativePath;
+    }
+
+    client.command(['subscribe', watch, 'dapp-subscription', sub],
+        function (error, resp) {
+            if (error) {
+                console.error('Failed to subscribe: ', error);
+                return;
+            }
+            console.log('Subscription established');
+        }
+    );
+
+    client.on('subscription', function (resp) {
+        if (resp.subscription !== 'dapp-subscription') return;
+
+        resp.files.forEach(function (file) {
+            console.log('File changed: ' + file);
+        });
+
+        child.execSync(
+            "geth --exec '" +
+            "loadScript(\"" + devtoolsPath + "\");" +
+            "status.notifyDAppChanged(\"" + publicKey + "\", \"" + dapp + "\");'" +
+            " " +
+            "attach " + attachTo
+        );
+    });
+}
 
 cli.version(pkgJson.version);
 
@@ -32,7 +71,7 @@ cli.command("add-dapp <attach_to> <public_key> <dapp>")
     });
 
 cli.command("remove-dapp <attach_to> <public_key> <dapp_identity>")
-    .description("Adds a DApp to contacts and chats")
+    .description("Removes a debuggable DApp")
     .action(function (attachTo, publicKey, dappIdentity) {
         dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
         child.execSync(
@@ -41,6 +80,46 @@ cli.command("remove-dapp <attach_to> <public_key> <dapp_identity>")
             "status.removeDApp(\"" + publicKey + "\", \"" + dapp + "\");'" +
             " " +
             "attach " + attachTo
+        );
+    });
+
+cli.command("watch-dapp <attach_to> <public_key> <dapp_identity> <dapp_dir>")
+    .description("Starts watching for DApp changes")
+    .action(function (attachTo, publicKey, dappIdentity, dappDir) {
+        dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
+
+        client.capabilityCheck(
+            {optional:[], required:['relative_root']},
+            function (error, resp) {
+                if (error) {
+                    console.log(error);
+                    client.end();
+                    return;
+                }
+
+                client.command(
+                    ['watch-project', dappDir],
+                    function (error, resp) {
+                        if (error) {
+                            console.error('Error initiating watch:', error);
+                            return;
+                        }
+
+                        if ('warning' in resp) {
+                            console.log('Warning: ', resp.warning);
+                        }
+
+                        makeSubscription(
+                            client,
+                            resp.watch,
+                            resp.relative_path,
+                            attachTo,
+                            publicKey,
+                            dapp
+                        );
+                    }
+                );
+            }
         );
     });
 

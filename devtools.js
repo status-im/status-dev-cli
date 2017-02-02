@@ -27,7 +27,7 @@ var status = {
             "ttl": 2,
             "payload": web3.fromAscii("{:type :debug :action :dapp-changed :args \"" + argsHex + "\"}\n")
         });
-        return "DApp has been removed";
+        return "Notification sent";
     }
 };
 
