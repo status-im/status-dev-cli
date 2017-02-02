@@ -1,0 +1,14 @@
+{
+  "name": "status-dev-cli",
+  "version": "1.0.0",
+  "description": "CLI for Status",
+  "main": "index.js",
+  "bin": {
+    "status-dev-cli": "./index.js"
+  },
+  "author": "Status.im",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "commander": "^2.9.0"
+  }
+}
