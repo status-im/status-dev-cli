@@ -1,6 +1,6 @@
 # Status CLI
 
-Additional tools for DApps developers. These tools allows to speed up the process of developing DApps for Status.
+Additional tools for DApps developers. These tools allow to speed up the process of developing DApps for Status.
 
 `status-dev-cli` is included in Status bundle, and all these commands can be executed directly from `status-react` directory. However, `status-dev-cli` is a standalone tool and you can install it without Status.
 
