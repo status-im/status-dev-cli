@@ -6,10 +6,11 @@ Additional tools for DApps developers. These tools allows to speed up the proces
 
 ## Requirements
 
-1. Geth (https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum);
-2. Node.js;
-3. NPM;
-4. Watchman (https://facebook.github.io/watchman/docs/install.html).
+1. adb (from Android SDK);
+2. curl;
+3. Node.js;
+4. NPM;
+5. Watchman (https://facebook.github.io/watchman/docs/install.html).
 
 ## Installing standalone
 
@@ -23,46 +24,42 @@ npm i -g
 
 ### Adding DApp
 
-`./status-dev-cli add-dapp <attach_to> <public_key> <dapp>`
+`./status-dev-cli add-dapp <ip> <dapp>`
 
-* `attach_to` — Geth endpoint;
-* `public_key` — Public key of your user (you can find it in your profile);
+* `ip` — device IP address;
 * `dapp` — JSON containing DApp information. Required fields are `name`, `dapp-url` and `whisper-identity`. 
 
 Example:
 
 ```
 ./status-dev-cli add-dapp \
-     http://localhost:8545 \
-     "0x04..." \
+     localhost \
      '{"name": "Test dapp", "whisper-identity": "dapp-test", "dapp-url": "http://localhost:1234"}'
 ```
 
 ### Removing DApp
 
-`./status-dev-cli remove-dapp <attach_to> <public_key> <dapp_identity>`
+`./status-dev-cli remove-dapp <ip> <dapp_identity>`
 
-* `attach_to` — Geth endpoint;
-* `public_key` — Public key of your user (you can find it in your profile);
+* `ip` — device IP address;
 * `dapp_identity` — `whisper-identity` of your DApp. 
 
 Example:
 
 ```
-./status-dev-cli remove-dapp http://localhost:8545 "0x04..." "dapp-test"
+./status-dev-cli remove-dapp localhost "dapp-test"
 ```
 
 ### Watching for DApp changes and refreshing DApp automatically
 
-`./status-dev-cli watch-dapp <attach_to> <public_key> <dapp_identity> <dapp_dir>`
+`./status-dev-cli watch-dapp <ip> <dapp_identity> <dapp_dir>`
 
-* `attach_to` — Geth endpoint;
-* `public_key` — Public key of your user (you can find it in your profile);
+* `ip` — device IP address;
 * `dapp_identity` — `whisper-identity` of your DApp;
 * `dapp_dir` — dir that should be observed.
 
 Example:
 
 ```
-./status-dev-cli watch-dapp http://localhost:8545 "0x04..." "dapp-test" ~/Documents/DApps/dapp-test/
+./status-dev-cli watch-dapp localhost "dapp-test" ~/Documents/DApps/dapp-test/
 ```
