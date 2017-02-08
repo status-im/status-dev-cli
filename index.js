@@ -4,7 +4,6 @@ const child = require('child_process')
 const watchman = require('fb-watchman');
 
 const pkgJson = require(__dirname + '/package.json');
-const devtoolsPath = __dirname + '/devtools.js';
 
 var client = new watchman.Client();
 
@@ -19,7 +18,7 @@ function fromAscii(str) {
     return "0x" + hex;
 };
 
-function makeSubscription(client, watch, relativePath, attachTo, publicKey, dapp) {
+function makeSubscription(client, watch, relativePath, ip, dapp) {
     sub = {
         expression: ["allof", ["match", "*.*"]],
         fields: ["name"]
@@ -45,45 +44,30 @@ function makeSubscription(client, watch, relativePath, attachTo, publicKey, dapp
             console.log('File changed: ' + file);
         });
 
-        child.execSync(
-            "geth --exec '" +
-            "loadScript(\"" + devtoolsPath + "\");" +
-            "status.notifyDAppChanged(\"" + publicKey + "\", \"" + dapp + "\");'" +
-            " " +
-            "attach " + attachTo
-        );
+        url = "http://" + ip + ":5561/dapp-changed";
+        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dapp + "\"}' " + url);
     });
 }
 
 cli.version(pkgJson.version);
 
-cli.command("add-dapp <attach_to> <public_key> <dapp>")
+cli.command("add-dapp <ip> <dapp>")
     .description("Adds a DApp to contacts and chats")
-    .action(function (attachTo, publicKey, dapp) {
+    .action(function (ip, dapp) {
         dapp = fromAscii(dapp);
-        child.execSync(
-            "geth --exec '" +
-            "loadScript(\"" + devtoolsPath + "\");" +
-            "status.addDApp(\"" + publicKey + "\", \"" + dapp + "\");'" +
-            " " +
-            "attach " + attachTo
-        );
+        url = "http://" + ip + ":5561/add-dapp";
+        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dapp + "\"}' " + url);
     });
 
-cli.command("remove-dapp <attach_to> <public_key> <dapp_identity>")
+cli.command("remove-dapp <ip> <dapp_identity>")
     .description("Removes a debuggable DApp")
-    .action(function (attachTo, publicKey, dappIdentity) {
+    .action(function (ip, dappIdentity) {
         dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
-        child.execSync(
-            "geth --exec '" +
-            "loadScript(\"" + devtoolsPath + "\");" +
-            "status.removeDApp(\"" + publicKey + "\", \"" + dapp + "\");'" +
-            " " +
-            "attach " + attachTo
-        );
+        url = "http://" + ip + ":5561/remove-dapp";
+        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dapp + "\"}' " + url);
     });
 
-cli.command("watch-dapp <attach_to> <public_key> <dapp_identity> <dapp_dir>")
+cli.command("watch-dapp <ip> <dapp_identity> <dapp_dir>")
     .description("Starts watching for DApp changes")
     .action(function (attachTo, publicKey, dappIdentity, dappDir) {
         dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
@@ -113,8 +97,7 @@ cli.command("watch-dapp <attach_to> <public_key> <dapp_identity> <dapp_dir>")
                             client,
                             resp.watch,
                             resp.relative_path,
-                            attachTo,
-                            publicKey,
+                            ip,
                             dapp
                         );
                     }
