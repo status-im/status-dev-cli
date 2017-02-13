@@ -69,7 +69,7 @@ cli.command("remove-dapp <ip> <dapp_identity>")
 
 cli.command("watch-dapp <ip> <dapp_identity> <dapp_dir>")
     .description("Starts watching for DApp changes")
-    .action(function (attachTo, publicKey, dappIdentity, dappDir) {
+    .action(function (ip, dappIdentity, dappDir) {
         dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
 
         client.capabilityCheck(
