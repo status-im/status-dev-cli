@@ -2,10 +2,14 @@
 const cli = require("commander")
 const child = require('child_process')
 const watchman = require('fb-watchman');
+const fs = require('fs');
+const path = require('path');
 
 const pkgJson = require(__dirname + '/package.json');
 
-var client = new watchman.Client();
+const client = new watchman.Client();
+const defaultIp = "localhost";
+const defaultDAppPort = 8080;
 
 function fromAscii(str) {
     var hex = "";
@@ -18,7 +22,28 @@ function fromAscii(str) {
     return "0x" + hex;
 };
 
-function makeSubscription(client, watch, relativePath, ip, dapp) {
+function getCurrentPackageData() {
+    var obj = {};
+    if (fs.existsSync(process.cwd() + '/package.json')) {
+        var json = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
+        obj["name"] = json.name;
+        obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
+        obj["dapp-url"] = "http://localhost:" + (cli.dappPort || defaultDAppPort);
+    }
+    return obj;
+}
+
+function getPackageData(dapp) {
+    var dappData;
+    if (!dapp) {
+        dappData = JSON.stringify(getCurrentPackageData());
+    } else {
+        dappData = dapp;
+    }
+    return fromAscii(dappData);
+}
+
+function makeSubscription(client, watch, relativePath, dappData) {
     sub = {
         expression: ["allof", ["match", "*.*"]],
         fields: ["name"]
@@ -41,36 +66,46 @@ function makeSubscription(client, watch, relativePath, ip, dapp) {
         if (resp.subscription !== 'dapp-subscription') return;
 
         resp.files.forEach(function (file) {
-            console.log('File changed: ' + file);
+            //console.log('File changed: ' + file);
         });
 
-        url = "http://" + ip + ":5561/dapp-changed";
-        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dapp + "\"}' " + url);
+        url = "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed";
+        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
     });
 }
 
-cli.version(pkgJson.version);
-
-cli.command("add-dapp <ip> <dapp>")
+cli.command("add-dapp [dapp]")
     .description("Adds a DApp to contacts and chats")
-    .action(function (ip, dapp) {
-        dapp = fromAscii(dapp);
-        url = "http://" + ip + ":5561/add-dapp";
-        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dapp + "\"}' " + url);
+    .action(function (dapp) {
+        var dappData = getPackageData(dapp);
+        if (dappData) {
+            url = "http://" + (cli.ip || defaultIp) + ":5561/add-dapp";
+            child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
+        }
     });
 
-cli.command("remove-dapp <ip> <dapp_identity>")
+cli.command("remove-dapp [dapp]")
     .description("Removes a debuggable DApp")
-    .action(function (ip, dappIdentity) {
-        dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
-        url = "http://" + ip + ":5561/remove-dapp";
-        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dapp + "\"}' " + url);
+    .action(function (dapp) {
+        var dappData = getPackageData(dapp);
+        if (dappData) {
+            url = "http://" + (cli.ip || defaultIp) + ":5561/remove-dapp";
+            child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
+        }
     });
 
-cli.command("watch-dapp <ip> <dapp_identity> <dapp_dir>")
+cli.command("watch-dapp [dappDir] [dapp]")
     .description("Starts watching for DApp changes")
-    .action(function (ip, dappIdentity, dappDir) {
-        dapp = fromAscii(JSON.stringify({"whisper-identity": dappIdentity}));
+    .action(function (dappDir, dapp) {
+        var dappData = getPackageData(dapp);
+        if (!dappData) {
+            return;
+        }
+        dappDir = dappDir || process.cwd();
+        if (fs.existsSync(dappDir + '/build/')) {
+            dappDir += '/build';
+        }
+        console.log("Watching for changes in " + dappDir);
 
         client.capabilityCheck(
             {optional:[], required:['relative_root']},
@@ -97,8 +132,7 @@ cli.command("watch-dapp <ip> <dapp_identity> <dapp_dir>")
                             client,
                             resp.watch,
                             resp.relative_path,
-                            ip,
-                            dapp
+                            dappData
                         );
                     }
                 );
@@ -110,8 +144,8 @@ cli.on("*", function(command) {
     console.error("Unknown command " + command[0] + ". See --help for valid commands")
 });
 
-if (process.argv.length <= 2) {
-    cli.outputHelp();
-} else {
-    cli.parse(process.argv);
-}
+
+cli.version(pkgJson.version)
+    .option("--ip [ip]", "IP address of your device")
+    .option("--dapp-port [dappPort]", "Port of your local DApp server")
+    .parse(process.argv);
