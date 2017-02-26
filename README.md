@@ -2,9 +2,6 @@
 
 Additional tools for DApps developers. These tools allows to speed up the process of developing DApps for Status.
 
-`status-dev-cli` is included in Status bundle, and all these commands can be executed directly from `status-react` directory. 
-However, `status-dev-cli` is a standalone tool and you can install it without Status.
-
 ## Requirements
 
 1. adb (from Android SDK);
@@ -13,12 +10,10 @@ However, `status-dev-cli` is a standalone tool and you can install it without St
 4. NPM;
 5. Watchman (https://facebook.github.io/watchman/docs/install.html).
 
-## Installing standalone
+## Installing
 
 ```
-git clone https://github.com/status-im/status-dev-cli.git
-cd status-dev-cli
-npm i -g
+npm i -g status-dev-cli
 ```
 
 ## How to
@@ -42,50 +37,29 @@ Imagine you are developing a DApp on your computer. You have a directory where a
 and there is a server running on your computer. Let's say it is running on port 8080, so you can access 
 your DApp by typing http://localhost:8080 in your browser.
 
-1. Add a DApp to Status by executing `./status-dev-cli add-dapp localhost '{"whisper-identity": "dapp-test", "dapp-url": "http://localhost:8080/", "name": "My Dapp"}'`;
+1. Add a DApp to Status by executing `status-dev-cli add-dapp '{"whisper-identity": "dapp-test", "dapp-url": "http://localhost:8080/", "name": "My Dapp"}'`;
 2. Open the "My Dapp" on your device;
-3. Optional: Execute `./status-dev-cli watch-dapp localhost "dapp-test" ~/Documents/Dev/MyDapp` to start automatically refreshing your DApp in Status browser when you change the DApp's code.
+3. Optional: Execute `status-dev-cli watch-dapp . '{"whisper-identity": "dapp-test"}'` to start automatically refreshing your DApp in Status browser when you change the DApp's code.
 
 ## API
 
+You can specify a --dapp-port in the case your DApp uses port other than 8080.
+
 ### Adding DApp
 
-`./status-dev-cli add-dapp <ip> <dapp>`
+`status-dev-cli add-dapp [dapp]`
 
-* `ip` — device IP address;
-* `dapp` — JSON containing DApp information. Required fields are `name`, `dapp-url` and `whisper-identity`. 
-
-Example:
-
-```
-./status-dev-cli add-dapp \
-     localhost \
-     '{"name": "Test dapp", "whisper-identity": "dapp-test", "dapp-url": "http://localhost:1234"}'
-```
+* `dapp` — JSON containing DApp information. It is not required if your DApp contains `package.json` file. Otherwise, this map should contain `whisper-identity`, `dapp-url` and `name` fields (see the example in **Scenario** section)
 
 ### Removing DApp
 
-`./status-dev-cli remove-dapp <ip> <dapp_identity>`
+`status-dev-cli remove-dapp [dapp]`
 
-* `ip` — device IP address;
-* `dapp_identity` — `whisper-identity` of your DApp. 
-
-Example:
-
-```
-./status-dev-cli remove-dapp localhost "dapp-test"
-```
+* `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
 
 ### Watching for DApp changes and refreshing DApp automatically
 
-`./status-dev-cli watch-dapp <ip> <dapp_identity> <dapp_dir>`
+`status-dev-cli watch-dapp [dappDir] [dapp]`
 
-* `ip` — device IP address;
-* `dapp_identity` — `whisper-identity` of your DApp;
-* `dapp_dir` — dir that should be observed.
-
-Example:
-
-```
-./status-dev-cli watch-dapp localhost "dapp-test" ~/Documents/DApps/dapp-test/
-```
+* `dapp_dir` — dir that should be observed. Not required;
+* `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
