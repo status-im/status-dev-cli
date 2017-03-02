@@ -5,10 +5,9 @@ Additional tools for DApps developers. These tools allows to speed up the proces
 ## Requirements
 
 1. adb (from Android SDK);
-2. curl;
-3. Node.js;
-4. NPM;
-5. Watchman (https://facebook.github.io/watchman/docs/install.html).
+2. Node.js;
+3. NPM;
+4. Watchman (https://facebook.github.io/watchman/docs/install.html).
 
 ## Installing
 

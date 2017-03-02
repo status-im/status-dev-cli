@@ -4,6 +4,8 @@ const child = require('child_process')
 const watchman = require('fb-watchman');
 const fs = require('fs');
 const path = require('path');
+const request = require('request');
+const chalk = require('chalk');
 
 const pkgJson = require(__dirname + '/package.json');
 
@@ -71,7 +73,27 @@ function makeSubscription(client, watch, relativePath, dappData) {
 
         url = "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed";
         child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
+
+        request({
+            url: "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed",
+            method: "POST",
+            json: true,
+            body: { encoded: dappData }
+        }, function (error, response, body) {
+            if (error) {
+                printMan();
+            }
+        });
     });
+}
+
+function printMan() {
+    console.log(chalk.red("Cannot connect to Status"));
+    console.log("1. Please, ensure that your device is connected to your computer;");
+    console.log("2. If it is connected, ensure that you're logged in and the debug mode is enabled");
+    console.log();
+    console.log("Check our guide for more information:");
+    console.log("https://github.com/status-im/status-dev-cli/blob/master/README.md");
 }
 
 cli.command("add-dapp [dapp]")
@@ -79,8 +101,18 @@ cli.command("add-dapp [dapp]")
     .action(function (dapp) {
         var dappData = getPackageData(dapp);
         if (dappData) {
-            url = "http://" + (cli.ip || defaultIp) + ":5561/add-dapp";
-            child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
+            request({
+                url: "http://" + (cli.ip || defaultIp) + ":5561/add-dapp",
+                method: "POST",
+                json: true,
+                body: { encoded: dappData }
+            }, function (error, response, body) {
+                if (error) {
+                    printMan();
+                } else {
+                    console.log(chalk.green("DApp has been added succesfully"));
+                }
+            });
         }
     });
 
@@ -89,8 +121,18 @@ cli.command("remove-dapp [dapp]")
     .action(function (dapp) {
         var dappData = getPackageData(dapp);
         if (dappData) {
-            url = "http://" + (cli.ip || defaultIp) + ":5561/remove-dapp";
-            child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
+            request({
+                url: "http://" + (cli.ip || defaultIp) + ":5561/remove-dapp",
+                method: "POST",
+                json: true,
+                body: { encoded: dappData }
+            }, function (error, response, body) {
+                if (error) {
+                    printMan();
+                } else {
+                    console.log(chalk.green("DApp has been removed succesfully"));
+                }
+            });
         }
     });
 
