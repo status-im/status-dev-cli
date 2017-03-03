@@ -88,9 +88,9 @@ function makeSubscription(client, watch, relativePath, dappData) {
 }
 
 function printMan() {
-    console.log(chalk.red("Cannot connect to Status"));
+    console.error(chalk.red("Cannot connect to Status."));
     console.log("1. Please, ensure that your device is connected to your computer;");
-    console.log("2. If it is connected, ensure that you're logged in and the debug mode is enabled");
+    console.log("2. If it is connected, ensure that you're logged in and the debug mode is enabled.");
     console.log();
     console.log("Check our guide for more information:");
     console.log("https://github.com/status-im/status-dev-cli/blob/master/README.md");
@@ -110,7 +110,7 @@ cli.command("add-dapp [dapp]")
                 if (error) {
                     printMan();
                 } else {
-                    console.log(chalk.green("DApp has been added succesfully"));
+                    console.log(chalk.green("DApp has been added succesfully."));
                 }
             });
         }
@@ -130,7 +130,7 @@ cli.command("remove-dapp [dapp]")
                 if (error) {
                     printMan();
                 } else {
-                    console.log(chalk.green("DApp has been removed succesfully"));
+                    console.log(chalk.green("DApp has been removed succesfully."));
                 }
             });
         }
@@ -183,7 +183,7 @@ cli.command("watch-dapp [dappDir] [dapp]")
     });
 
 cli.on("*", function(command) {
-    console.error("Unknown command " + command[0] + ". See --help for valid commands")
+    console.error("Unknown command " + command[0] + ". See --help for valid commands.")
 });
 
 
