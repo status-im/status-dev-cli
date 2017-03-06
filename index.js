@@ -182,6 +182,23 @@ cli.command("watch-dapp [dappDir] [dapp]")
         );
     });
 
+cli.command("switch-node <url>")
+  .description("Switches the current RPC node")
+  .action(function (url) {
+    request({
+      url: "http://" + (cli.ip || defaultIp) + ":5561/switch-node",
+      method: "POST",
+      json: true,
+      body: {encoded: fromAscii(JSON.stringify({"url": url}))}
+    }, function (error, response, body) {
+      if (error) {
+        printMan();
+      } else {
+        console.log(chalk.green("DApp has been removed succesfully."));
+      }
+    });
+  });
+
 cli.on("*", function(command) {
     console.error("Unknown command " + command[0] + ". See --help for valid commands.")
 });
