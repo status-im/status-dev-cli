@@ -182,6 +182,26 @@ cli.command("watch-dapp [dappDir] [dapp]")
         );
     });
 
+cli.command("refresh-dapp [dapp]")
+  .description("Refreshes a debuggable and currently visible DApp")
+  .action(function (dapp) {
+    var dappData = getPackageData(dapp);
+    if (dappData) {
+      request({
+        url: "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed",
+        method: "POST",
+        json: true,
+        body: { encoded: dappData }
+      }, function (error, response, body) {
+        if (error) {
+          printMan();
+        } else {
+          console.log(chalk.green("DApp has been refreshed succesfully."));
+        }
+      });
+    }
+  });
+
 cli.command("switch-node <url>")
   .description("Switches the current RPC node")
   .action(function (url) {

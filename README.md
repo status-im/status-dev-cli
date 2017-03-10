@@ -42,7 +42,17 @@ You can additionally specify `--dapp-port <port>` if your DApp uses port other t
 * `dapp_dir` — dir that should be observed. Not required;
 * `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
 
-#### 4. Switching network
+#### 4. Refreshing a DApp manually
+
+***Requires status-dev-cli 2.2.1+!***
+
+This command simply reloads the DApp
+
+`status-dev-cli refresh-dapp [dapp]`
+
+* `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
+
+#### 5. Switching network
 
 ***Requires Status 0.9.4+ & status-dev-cli 2.2.0+!***
 
