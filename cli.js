@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-const cli = require("commander")
-const child = require('child_process')
+const cli = require("commander");
+const child = require('child_process');
 const watchman = require('fb-watchman');
 const fs = require('fs');
 const path = require('path');
@@ -29,7 +29,7 @@ function encodeObject(obj) {
   return fromAscii(JSON.stringify(obj));
 }
 
-function makeSubscription(client, watch, relativePath, dappData) {
+function makeSubscription(client, watch, relativePath, contactData) {
     sub = {
         expression: ["allof", ["match", "*.*"]],
         fields: ["name"]
@@ -38,7 +38,7 @@ function makeSubscription(client, watch, relativePath, dappData) {
         sub.relative_root = relativePath;
     }
 
-    client.command(['subscribe', watch, 'dapp-subscription', sub],
+    client.command(['subscribe', watch, 'contact-subscription', sub],
         function (error, resp) {
             if (error) {
                 console.error('Failed to subscribe: ', error);
@@ -49,20 +49,20 @@ function makeSubscription(client, watch, relativePath, dappData) {
     );
 
     client.on('subscription', function (resp) {
-        if (resp.subscription !== 'dapp-subscription') return;
+        if (resp.subscription !== 'contact-subscription') return;
 
         resp.files.forEach(function (file) {
             //console.log('File changed: ' + file);
         });
 
         url = "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed";
-        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + dappData + "\"}' " + url);
+        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + contactData + "\"}' " + url);
 
         request({
             url: "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed",
             method: "POST",
             json: true,
-            body: { encoded: dappData }
+            body: { encoded: contactData }
         }, function (error, response, body) {
             if (error) {
                 printMan();
@@ -82,12 +82,12 @@ function getCurrentPackageData() {
     return obj;
 }
 
-function getPackageData(dapp) {
-    var dappData = dapp;
-    if (!dapp) {
-        dappData = getCurrentPackageData();
+function getPackageData(contact) {
+    var contactData = contact;
+    if (!contact) {
+        contactData = getCurrentPackageData();
     }
-    return dappData;
+    return contactData;
 }
 
 function printMan() {
@@ -99,50 +99,49 @@ function printMan() {
     console.log("https://github.com/status-im/status-dev-cli/blob/master/README.md");
 }
 
-cli.command("add-dapp [dapp]")
-    .description("Adds a DApp to contacts and chats")
-    .action(function (dapp) {
+cli.command("add [contact]")
+    .description("Adds a contact")
+    .action(function (contact) {
       var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-      var dappData = getPackageData(dapp);
-      if (dappData) {
-        statusDev.addDapp(dappData, function(err, result) {
+      var contactData = getPackageData(contact);
+      if (contactData) {
+        statusDev.addContact(contactData, function(err, result) {
           if (err) {
             printMan();
           } else {
-            console.log(chalk.green("DApp has been added succesfully."));
+            console.log(chalk.green("Contact has been added succesfully."));
           }
         });
       }
     });
 
-cli.command("remove-dapp [dapp]")
-    .description("Removes a debuggable DApp")
-    .action(function (dapp) {
+cli.command("remove [contact]")
+    .description("Removes a contact")
+    .action(function (contact) {
       var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-      statusDev.removeDapp();
-      var dappData = getPackageData(dapp);
-      if (dappData) {
-        statusDev.removeDapp(dappData, function(err, result) {
+      var contactData = getPackageData(contact);
+      if (contactData) {
+        statusDev.removeContact(contactData, function(err, result) {
           if (err) {
             printMan();
           } else {
-            console.log(chalk.green("DApp has been removed succesfully."));
+            console.log(chalk.green("Contact has been removed succesfully."));
           }
         });
       }
     });
 
-cli.command("refresh-dapp [dapp]")
-  .description("Refreshes a debuggable and currently visible DApp")
-  .action(function (dapp) {
+cli.command("refresh [contact]")
+  .description("Refreshes a debuggable contact")
+  .action(function (contact) {
     var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-    var dappData = getPackageData(dapp);
-    if (dappData) {
-      statusDev.refreshDapp(dappData, function(err, result) {
+    var contactData = getPackageData(contact);
+    if (contactData) {
+      statusDev.refreshContact(contactData, function(err, result) {
         if (err) {
           printMan();
         } else {
-          console.log(chalk.green("DApp has been refreshed succesfully."));
+          console.log(chalk.green("Contact has been refreshed succesfully."));
         }
       });
     }
@@ -161,18 +160,18 @@ cli.command("switch-node <url>")
     });
   });
 
-cli.command("watch-dapp [dappDir] [dapp]")
-    .description("Starts watching for DApp changes")
-    .action(function (dappDir, dapp) {
-        var dappData = getPackageData(dapp);
-        if (!dappData) {
+cli.command("watch [dir] [contact]")
+    .description("Starts watching for contact changes")
+    .action(function (dir, contact) {
+        var contactData = getPackageData(contact);
+        if (!contactData) {
             return;
         }
-        dappDir = dappDir || process.cwd();
-        if (fs.existsSync(dappDir + '/build/')) {
-            dappDir += '/build';
+        contactDir = dir || process.cwd();
+        if (fs.existsSync(contactDir + '/build/')) {
+            contactDir += '/build';
         }
-        console.log("Watching for changes in " + dappDir);
+        console.log("Watching for changes in " + contactDir);
 
         client.capabilityCheck(
             {optional:[], required:['relative_root']},
@@ -184,7 +183,7 @@ cli.command("watch-dapp [dappDir] [dapp]")
                 }
 
                 client.command(
-                    ['watch-project', dappDir],
+                    ['watch-project', contactDir],
                     function (error, resp) {
                         if (error) {
                             console.error('Error initiating watch:', error);
@@ -199,7 +198,7 @@ cli.command("watch-dapp [dappDir] [dapp]")
                             client,
                             resp.watch,
                             resp.relative_path,
-                            encodeObject(dappData)
+                            encodeObject(contactData)
                         );
                     }
                 );

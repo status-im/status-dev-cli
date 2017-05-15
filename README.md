@@ -21,26 +21,26 @@ npm i -g status-dev-cli
 
 * `--ip <device-ip>` to specify your device's IP address.
 
-#### 1. Adding a DApp
+#### 1. Adding a contact (DApp or bot)
 
-`status-dev-cli add-dapp [dapp]`
+`status-dev-cli add [contact]`
 
-* `dapp` — JSON containing DApp information. It is not required if your DApp contains `package.json` file. Otherwise, this map should contain `whisper-identity`, `dapp-url` and `name` fields (see the example in **Scenario** section)
+* `contact` — JSON containing contact information. It is not required if you develop a DApp and this DApp contains `package.json` file. Otherwise, this map should contain `whisper-identity`, `name` and `dapp-url` or `bot-url` fields (see the example in **Scenario** section)
 
 You can additionally specify `--dapp-port <port>` if your DApp uses port other than 8080 and you don't specify a `dapp`JSON.
 
-#### 2. Removing a DApp
+#### 2. Removing a contact (DApp or bot)
 
-`status-dev-cli remove-dapp [dapp]`
+`status-dev-cli remove [contact]`
 
-* `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
+* `dapp` — JSON containing `whisper-identity` field. It is not required if you develop a DApp and this DApp contains `package.json` file. 
 
 #### 3. Refreshing a DApp automatically
 
-`status-dev-cli watch-dapp [dappDir] [dapp]`
+`status-dev-cli watch [dir] [contact]`
 
-* `dapp_dir` — dir that should be observed. Not required;
-* `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
+* `dir` — dir that should be observed. Not required;
+* `contact` — JSON containing `whisper-identity` field. It is not required if you develop a DApp and this DApp contains `package.json` file. 
 
 #### 4. Refreshing a DApp manually
 
@@ -48,7 +48,7 @@ You can additionally specify `--dapp-port <port>` if your DApp uses port other t
 
 This command simply reloads the DApp
 
-`status-dev-cli refresh-dapp [dapp]`
+`status-dev-cli refresh [dapp]`
 
 * `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
 
@@ -126,6 +126,6 @@ Imagine you are developing a DApp on your computer. You have a directory where a
 and there is a server running on your computer. Let's say it is running on port 8080, so you can access 
 your DApp by typing http://localhost:8080 in your browser.
 
-1. Add a DApp to Status by executing `status-dev-cli add-dapp '{"whisper-identity": "dapp-test", "dapp-url": "http://localhost:8080/", "name": "My Dapp"}'`;
+1. Add a DApp to Status by executing `status-dev-cli add '{"whisper-identity": "dapp-test", "dapp-url": "http://localhost:8080/", "name": "My Dapp"}'`;
 2. Open the "My Dapp" on your device;
 3. Optional: Execute `status-dev-cli watch-dapp . '{"whisper-identity": "dapp-test"}'` to start automatically refreshing your DApp in Status browser when you change the DApp's code.

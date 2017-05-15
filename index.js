@@ -18,36 +18,36 @@ var StatusDev = function(options) {
   this.url = "http://" + options.ip + ":5561";
 };
 
-StatusDev.prototype.addDapp = function(dappData, cb) {
+StatusDev.prototype.addContact = function(contactData, cb) {
   request({
     url: this.url + "/add-dapp",
     method: "POST",
     json: true,
-    body: { encoded: encodeObject(dappData) }
+    body: { encoded: encodeObject(contactData) }
   }, function (error, response, body) {
     if (cb === undefined) { return }
     cb(error, response);
   });
 };
 
-StatusDev.prototype.removeDapp = function(dappData, cb) {
+StatusDev.prototype.removeContact = function(contactData, cb) {
   request({
     url: this.url + "/remove-dapp",
     method: "POST",
     json: true,
-    body: { encoded: encodeObject(dappData) }
+    body: { encoded: encodeObject(contactData) }
   }, function (error, response, body) {
     if (cb === undefined) { return }
     cb(error, response);
   });
 };
 
-StatusDev.prototype.refreshDapp = function(dappData, cb) {
+StatusDev.prototype.refreshContact = function(contactData, cb) {
   request({
     url: this.url + "/dapp-changed",
     method: "POST",
     json: true,
-    body: { encoded: encodeObject(dappData) }
+    body: { encoded: encodeObject(contactData) }
   }, function (error, response, body) {
     if (cb === undefined) { return }
     cb(error, response);
