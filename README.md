@@ -15,7 +15,7 @@ Additional tools for DApps developers. These tools allows to speed up the proces
 npm i -g status-dev-cli
 ```
 
-## API
+## Command Line
 
 **Common additional parameters:**
 
@@ -64,6 +64,46 @@ This command allows to switch a network. Next time you login the network will be
 
 * `url` (required) — the network that will be used instead of `http://localhost:8545`
 
+## Library
+
+```
+  var StatusDev = require('status-dev-cli');
+  var statusDev = new StatusDev({ip: 'you-device-ip'});
+```
+
+#### dappData
+
+```
+  dataData = {
+    "whisper-identity": "dapp-MyAppName",
+    "dapp-url": "http://your-server-ip:port",
+    "name": "My App Name"
+  }
+```
+
+#### 1. Adding a DApp
+
+```
+  statusDev.addDapp(dappData, function(error, result) {});
+```
+
+#### 2. Refreshing a DApp
+
+```
+  statusDev.refreshDapp(dappData, function(error, result) {});
+```
+
+#### 3. Removing a DApp
+
+```
+  statusDev.removeDapp(dappData, function(error, result) {});
+```
+
+#### 4. Switching network
+
+```
+  statusDev.switchNode(rpcUrl, function(error, result) {});
+```
 
 ## DApp development
 
