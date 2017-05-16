@@ -83,9 +83,11 @@ function getCurrentPackageData() {
 }
 
 function getPackageData(contact) {
-    var contactData = contact;
+    var contactData;
     if (!contact) {
-        contactData = getCurrentPackageData();
+        contactData = JSON.stringify(getCurrentPackageData());
+    } else {
+        contactData = contact;
     }
     return contactData;
 }
