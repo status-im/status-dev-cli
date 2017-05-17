@@ -25,10 +25,6 @@ function fromAscii(str) {
     return "0x" + hex;
 };
 
-function encodeObject(obj) {
-  return fromAscii(JSON.stringify(obj));
-}
-
 function makeSubscription(client, watch, relativePath, contactData) {
     sub = {
         expression: ["allof", ["match", "*.*"]],
@@ -56,13 +52,13 @@ function makeSubscription(client, watch, relativePath, contactData) {
         });
 
         url = "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed";
-        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + contactData + "\"}' " + url);
+        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + fromAscii(contactData) + "\"}' " + url);
 
         request({
             url: "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed",
             method: "POST",
             json: true,
-            body: { encoded: contactData }
+            body: { encoded: fromAscii(contactData) }
         }, function (error, response, body) {
             if (error) {
                 printMan();
@@ -200,7 +196,7 @@ cli.command("watch [dir] [contact]")
                             client,
                             resp.watch,
                             resp.relative_path,
-                            encodeObject(contactData)
+                            contactData
                         );
                     }
                 );
