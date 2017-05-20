@@ -73,7 +73,7 @@ function getCurrentPackageData() {
         var json = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
         obj["name"] = json.name;
         obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
-        obj["dapp-url"] = "http://localhost:" + (cli.dappPort || defaultDAppPort);
+        obj["dapp-url"] = json["dapp-url"];
     }
     return obj;
 }
