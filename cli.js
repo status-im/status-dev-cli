@@ -78,7 +78,7 @@ function getCurrentPackageData() {
 	    if(json["bot-url"])
 	    	obj["bot-url"] = json["bot-url"];
 	    if(!json["dapp-url"] && !json["bot-url"])
-		throw "Neither 'dapp-url' nor 'bot-url' where provided in package.json"
+		console.error(chalk.red("Neither 'dapp-url' nor 'bot-url' where provided in package.json"));
     }
     return obj;
 }
