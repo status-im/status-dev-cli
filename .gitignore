@@ -1,5 +1,8 @@
 .DS_Store
 
+*.iml
+/.idea
+
 # node.js
 #
 node_modules/
