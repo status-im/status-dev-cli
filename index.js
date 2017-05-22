@@ -66,7 +66,8 @@ StatusDev.prototype.listDApps = function(cb) {
     request({
         url: this.url + "/list",
         json: true,
-        method: "POST"
+        method: "POST",
+        body: {}
     }, function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);

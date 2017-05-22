@@ -185,6 +185,8 @@ cli.command("list")
                 printMan();
             } else if (body === undefined) {
                 printServerProblem();
+            } else if (body.data === undefined) {
+                console.log(chalk.red("No DApps or bots."));
             } else {
                 body.data.forEach(function(item, i, arr) {
                     if (item["dapp-url"]) {
@@ -281,4 +283,3 @@ cli.version(pkgJson.version)
     .option("--ip [ip]", "IP address of your device")
     .option("--dapp-port [dappPort]", "Port of your local DApp server")
     .parse(process.argv);
-
