@@ -91,72 +91,142 @@ function getPackageData(contact) {
 function printMan() {
     console.error(chalk.red("Cannot connect to Status."));
     console.log("1. Please, ensure that your device is connected to your computer;");
-    console.log("2. If it is connected, ensure that you're logged in and the debug mode is enabled.");
+    console.log("2. If it is connected, ensure that you're logged in and the debug mode is enabled;");
+    console.log("3. If you use Android, you should also execute " +
+        chalk.yellow("adb forward tcp:5561 tcp:5561") + " before using development tools.")
     console.log();
-    console.log("Check our guide for more information:");
-    console.log("https://github.com/status-im/status-dev-cli/blob/master/README.md");
+    console.log("Check our docs for more information:");
+    console.log("http://docs.status.im/");
+}
+
+function printServerProblem() {
+    console.log("Server doesn't respond properly.");
+    console.log("Please, re-run it or re-login to your account.");
+    console.log();
+    console.log("Check our docs for more information:");
+    console.log("http://docs.status.im/");
 }
 
 cli.command("add [contact]")
     .description("Adds a contact")
     .action(function (contact) {
-      var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-      var contactData = getPackageData(contact);
-      if (contactData) {
-        statusDev.addContact(contactData, function(err, result) {
-          if (err) {
-            printMan();
-          } else {
-            console.log(chalk.green("Contact has been added succesfully."));
-          }
-        });
-      }
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var contactData = getPackageData(contact);
+        if (contactData) {
+            statusDev.addContact(contactData, function(err, body) {
+                if (err) {
+                    printMan();
+                } else if (body.type == "error") {
+                    console.log(chalk.red(body.text));
+                } else {
+                    console.log(chalk.green(body.text));
+                }
+            });
+        }
     });
 
 cli.command("remove [contact]")
     .description("Removes a contact")
     .action(function (contact) {
-      var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-      var contactData = getPackageData(contact);
-      if (contactData) {
-        statusDev.removeContact(contactData, function(err, result) {
-          if (err) {
-            printMan();
-          } else {
-            console.log(chalk.green("Contact has been removed succesfully."));
-          }
-        });
-      }
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var contactData = getPackageData(contact);
+        if (contactData) {
+            statusDev.removeContact(contactData, function(err, body) {
+                if (err) {
+                    printMan();
+                } else if (body.type == "error") {
+                    console.log(chalk.red(body.text));
+                } else {
+                    console.log(chalk.green(body.text));
+                }
+            });
+        }
     });
 
 cli.command("refresh [contact]")
-  .description("Refreshes a debuggable contact")
-  .action(function (contact) {
-    var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-    var contactData = getPackageData(contact);
-    if (contactData) {
-      statusDev.refreshContact(contactData, function(err, result) {
-        if (err) {
-          printMan();
-        } else {
-          console.log(chalk.green("Contact has been refreshed succesfully."));
+    .description("Refreshes a debuggable contact")
+    .action(function (contact) {
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var contactData = getPackageData(contact);
+        if (contactData) {
+            statusDev.refreshContact(contactData, function(err, body) {
+                if (err) {
+                    printMan();
+                } else if (body.type == "error") {
+                    console.log(chalk.red(body.text));
+                } else {
+                    console.log(chalk.green(body.text));
+                }
+            });
         }
-      });
-    }
-  });
+    });
 
 cli.command("switch-node <url>")
-  .description("Switches the current RPC node")
-  .action(function (url) {
-    var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-    statusDev.switchNode(url, function(err, result) {
-      if (err) {
-        printMan();
-      } else {
-        console.log(chalk.green("RPC node has been changed succesfully."));
-      }
+    .description("Switches the current RPC node")
+    .action(function (url) {
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        statusDev.switchNode(url, function(err, body) {
+            if (err) {
+                printMan();
+            } else if (body.type == "error") {
+                console.log(chalk.red(body.text));
+            } else {
+                console.log(chalk.green(body.text));
+            }
+        });
     });
-  });
+
+cli.command("list")
+    .description("Displays all debuggable DApps and bots")
+    .action(function () {
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        statusDev.listDApps(function (err, body) {
+            if (err) {
+                printMan();
+            } else if (body === undefined) {
+                printServerProblem();
+            } else if (body.data === undefined) {
+                console.log(chalk.red("No DApps or bots."));
+            } else {
+                body.data.forEach(function(item, i, arr) {
+                    if (item["dapp-url"]) {
+                        console.log(chalk.green(chalk.bold(item["whisper-identity"]) +
+                            " (Name: \"" + item.name + "\", DApp URL: \"" + item["dapp-url"] + "\")"));
+                    } else if (item["bot-url"]) {
+                        console.log(chalk.cyan(chalk.bold(item["whisper-identity"]) +
+                            " (Name: \"" + item.name + "\", Bot URL: \"" + item["bot-url"] + "\")"));
+                    }
+                });
+            }
+        });
+    });
+
+cli.command("log <identity>")
+    .description("Returns log for a specified DApp or bot")
+    .action(function (identity) {
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        statusDev.getLog(identity, function (err, body) {
+            if (err) {
+                printMan();
+            } else if (body === undefined) {
+                printServerProblem();
+            } else if (body.type == "error") {
+                console.log(chalk.red(body.text));
+            } else {
+                body.data.forEach(function(item, i, arr) {
+                    var time = new Date(item.timestamp).toLocaleString();
+
+                    if (item.content.startsWith("error:")) {
+                        console.log(chalk.red(time + " " + item.content));
+                    } else if (item.content.startsWith("warn:")) {
+                        console.log(chalk.cyan(time + " " + item.content));
+                    } else {
+                        console.log(time + " " + item.content);
+                    }
+                });
+            }
+        });
+    });
 
 cli.command("watch [dir] [contact]")
     .description("Starts watching for contact changes")
@@ -213,4 +283,3 @@ cli.version(pkgJson.version)
     .option("--ip [ip]", "IP address of your device")
     .option("--dapp-port [dappPort]", "Port of your local DApp server")
     .parse(process.argv);
-

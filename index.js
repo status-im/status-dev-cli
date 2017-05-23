@@ -11,55 +11,79 @@ function fromAscii(str) {
 };
 
 var StatusDev = function(options) {
-  this.url = "http://" + options.ip + ":5561";
+    this.url = "http://" + options.ip + ":5561";
 };
 
 StatusDev.prototype.addContact = function(contactData, cb) {
-  request({
-    url: this.url + "/add-dapp",
-    method: "POST",
-    json: true,
-    body: { encoded: fromAscii(contactData) }
-  }, function (error, response, body) {
-    if (cb === undefined) { return }
-    cb(error, response);
-  });
+    request({
+        url: this.url + "/add-dapp",
+        method: "POST",
+        json: true,
+        body: { encoded: fromAscii(contactData) }
+    }, function (error, response, body) {
+        if (cb === undefined) { return }
+        cb(error, body);
+    });
 };
 
 StatusDev.prototype.removeContact = function(contactData, cb) {
-  request({
-    url: this.url + "/remove-dapp",
-    method: "POST",
-    json: true,
-    body: { encoded: fromAscii(contactData) }
-  }, function (error, response, body) {
-    if (cb === undefined) { return }
-    cb(error, response);
-  });
+    request({
+        url: this.url + "/remove-dapp",
+        method: "POST",
+        json: true,
+        body: { encoded: fromAscii(contactData) }
+    }, function (error, response, body) {
+        if (cb === undefined) { return }
+        cb(error, body);
+    });
 };
 
 StatusDev.prototype.refreshContact = function(contactData, cb) {
-  request({
-    url: this.url + "/dapp-changed",
-    method: "POST",
-    json: true,
-    body: { encoded: fromAscii(contactData) }
-  }, function (error, response, body) {
-    if (cb === undefined) { return }
-    cb(error, response);
-  });
+    request({
+        url: this.url + "/dapp-changed",
+        method: "POST",
+        json: true,
+        body: { encoded: fromAscii(contactData) }
+    }, function (error, response, body) {
+        if (cb === undefined) { return }
+        cb(error, body);
+    });
 };
 
 StatusDev.prototype.switchNode = function(rpcUrl, cb) {
-  request({
-    url: this.url + "/switch-node",
-    method: "POST",
-    json: true,
-    body: {encoded: fromAscii({"url": rpcUrl})}
-  }, function (error, response, body) {
-    if (cb === undefined) { return }
-    cb(error, response);
-  });
+    request({
+        url: this.url + "/switch-node",
+        method: "POST",
+        json: true,
+        body: {encoded: fromAscii({"url": rpcUrl})}
+    }, function (error, response, body) {
+        if (cb === undefined) { return }
+        cb(error, body);
+    });
+};
+
+StatusDev.prototype.listDApps = function(cb) {
+    request({
+        url: this.url + "/list",
+        json: true,
+        method: "POST",
+        body: {}
+    }, function (error, response, body) {
+        if (cb === undefined) { return }
+        cb(error, body);
+    });
+};
+
+StatusDev.prototype.getLog = function(identity, cb) {
+    request({
+        url: this.url + "/log",
+        method: "POST",
+        json: true,
+        body: { identity: identity }
+    }, function (error, response, body) {
+        if (cb === undefined) { return }
+        cb(error, body);
+    });
 };
 
 module.exports = StatusDev;
