@@ -12,7 +12,6 @@ const pkgJson = require(__dirname + '/package.json');
 
 const client = new watchman.Client();
 const defaultIp = "localhost";
-const defaultDAppPort = 8080;
 const statusDebugServerPort = 5561;
 const StatusDev = require('./index.js');
 
@@ -75,15 +74,23 @@ function getCurrentPackageData() {
         var json = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
         obj["name"] = json.name;
         obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
-        obj["dapp-url"] = "http://localhost:" + (cli.dappPort || defaultDAppPort);
+
+        obj["dapp-url"] = json["dapp-url"] || json["bot-url"];
+        if (!obj["dapp-url"]) {
+            console.error(chalk.red("Neither 'dapp-url' nor 'bot-url' have been found in your package.json file."));
+            return null;
+        }
     }
     return obj;
 }
 
 function getPackageData(contact) {
-    var contactData;
+    var contactData = null;
     if (!contact) {
-        contactData = JSON.stringify(getCurrentPackageData());
+        var data = getCurrentPackageData();
+        if (data != null) {
+            contactData = JSON.stringify(data);
+        }
     } else {
         contactData = contact;
     }
@@ -297,5 +304,4 @@ cli.on("*", function(command) {
 
 cli.version(pkgJson.version)
     .option("--ip [ip]", "IP address of your device")
-    .option("--dapp-port [dappPort]", "Port of your local DApp server")
     .parse(process.argv);
