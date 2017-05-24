@@ -1,6 +1,6 @@
 {
   "name": "status-dev-cli",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "CLI for Status",
   "main": "index.js",
   "bin": {
@@ -12,6 +12,7 @@
     "chalk": "^1.1.3",
     "commander": "^2.9.0",
     "fb-watchman": "^2.0.0",
+    "mdns": "^2.3.3",
     "request": "^2.79.0"
   }
 }

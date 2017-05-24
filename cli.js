@@ -6,12 +6,14 @@ const fs = require('fs');
 const path = require('path');
 const request = require('request');
 const chalk = require('chalk');
+const mdns = require('mdns');
 
 const pkgJson = require(__dirname + '/package.json');
 
 const client = new watchman.Client();
 const defaultIp = "localhost";
 const defaultDAppPort = 8080;
+const statusDebugServerPort = 5561;
 const StatusDev = require('./index.js');
 
 function fromAscii(str) {
@@ -226,6 +228,20 @@ cli.command("log <identity>")
                 });
             }
         });
+    });
+
+cli.command("scan")
+    .description("Scans your network and searches for Status debug servers")
+    .action(function () {
+        console.log("Searching for connected devices...");
+
+        var browser = mdns.createBrowser(mdns.tcp('http'));
+        browser.on('serviceUp', function(service) {
+            if (service.port == statusDebugServerPort) {
+                console.log(chalk.green(chalk.bold(service.name) + " (" + service.addresses.join(", ") + ")"));
+            }
+        });
+        browser.start();
     });
 
 cli.command("watch [dir] [contact]")
