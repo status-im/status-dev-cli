@@ -1,6 +1,6 @@
 {
   "name": "status-dev-cli",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "CLI for Status",
   "main": "index.js",
   "bin": {

@@ -55,7 +55,7 @@ StatusDev.prototype.switchNode = function(rpcUrl, cb) {
         url: this.url + "/switch-node",
         method: "POST",
         json: true,
-        body: {encoded: fromAscii({"url": rpcUrl})}
+        body: {encoded: fromAscii(JSON.stringify({"url": rpcUrl}))}
     }, function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
