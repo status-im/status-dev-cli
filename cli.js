@@ -74,9 +74,10 @@ function getCurrentPackageData() {
         var json = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
         obj["name"] = json.name;
         obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
+        obj["dapp-url"] = json["dapp-url"] || cli.dappUrl;
+        obj["bot-url"] = json["bot-url"] || cli.botUrl;
 
-        obj["dapp-url"] = json["dapp-url"] || json["bot-url"] || cli.dappUrl;
-        if (!obj["dapp-url"]) {
+        if (!obj["dapp-url"] && !obj["bot-url"]) {
             console.error(chalk.red("Neither 'dapp-url' nor 'bot-url' have been found in your package.json file."));
             return null;
         }
@@ -306,4 +307,5 @@ cli.on("*", function(command) {
 cli.version(pkgJson.version)
     .option("--ip [ip]", "IP address of your device")
     .option("--dappUrl [url]", "Custom DApp URL (overrides the one from the package.json)")
+    .option("--botUrl [url]", "Custom bot URL (overrides the one from the package.json)")
     .parse(process.argv);
