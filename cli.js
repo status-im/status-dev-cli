@@ -49,21 +49,12 @@ function makeSubscription(client, watch, relativePath, contactData) {
         if (resp.subscription !== 'contact-subscription') return;
 
         resp.files.forEach(function (file) {
-            //console.log('File changed: ' + file);
+            console.log('File changed: ' + file);
         });
 
-        url = "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed";
-        child.execSync("curl -X POST -H \"Content-Type: application/json\" -d '{\"encoded\": \"" + fromAscii(contactData) + "\"}' " + url);
-
-        request({
-            url: "http://" + (cli.ip || defaultIp) + ":5561/dapp-changed",
-            method: "POST",
-            json: true,
-            body: { encoded: fromAscii(contactData) }
-        }, function (error, response, body) {
-            if (error) {
-                printMan();
-            }
+        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        statusDev.refreshContact(contactData, function(err, body) {
+            // nothing
         });
     });
 }
@@ -76,11 +67,6 @@ function getCurrentPackageData() {
         obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
         obj["dapp-url"] = json["dapp-url"] || cli.dappUrl;
         obj["bot-url"] = json["bot-url"] || cli.botUrl;
-
-        if (!obj["dapp-url"] && !obj["bot-url"]) {
-            console.error(chalk.red("Neither 'dapp-url' nor 'bot-url' have been found in your package.json file."));
-            return null;
-        }
     }
     return obj;
 }
@@ -137,7 +123,12 @@ cli.command("remove [contactIdentity]")
     .description("Removes a contact")
     .action(function (contactIdentity) {
         var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-        var contactData = getPackageData(JSON.stringify({"whisper-identity": contactIdentity}));
+
+        var contact = null;
+        if (contactIdentity) {
+            contact = JSON.stringify({"whisper-identity": contactIdentity});
+        }
+        var contactData = getPackageData(contact);
         if (contactData) {
             statusDev.removeContact(contactData, function(err, body) {
                 if (err) {
@@ -155,7 +146,12 @@ cli.command("refresh [contactIdentity]")
     .description("Refreshes a debuggable contact")
     .action(function (contactIdentity) {
         var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-        var contactData = getPackageData(JSON.stringify({"whisper-identity": contactIdentity}));
+
+        var contact = null;
+        if (contactIdentity) {
+            contact = JSON.stringify({"whisper-identity": contactIdentity});
+        }
+        var contactData = getPackageData(contact);
         if (contactData) {
             statusDev.refreshContact(contactData, function(err, body) {
                 if (err) {
@@ -258,7 +254,10 @@ cli.command("scan")
 cli.command("watch [dir] [contactIdentity]")
     .description("Starts watching for contact changes")
     .action(function (dir, contactIdentity) {
-        var contact = JSON.stringify({"whisper-identity": contactIdentity});
+        var contact = null;
+        if (contactIdentity) {
+            contact = JSON.stringify({"whisper-identity": contactIdentity});
+        }
         var contactData = getPackageData(contact);
         if (!contactData) {
             return;
