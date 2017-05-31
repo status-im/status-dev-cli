@@ -240,7 +240,12 @@ cli.command("scan")
     .action(function () {
         console.log("Searching for connected devices...");
 
-        var browser = mdns.createBrowser(mdns.tcp('http'));
+        var sequence = [
+            mdns.rst.DNSServiceResolve(),
+            'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo({families:[0]}) : mdns.rst.getaddrinfo({families:[0]}),
+            mdns.rst.makeAddressesUnique()
+        ];
+        var browser = mdns.createBrowser(mdns.tcp('http'), {resolverSequence: sequence});
         browser.on('serviceUp', function(service) {
             if (service.port == statusDebugServerPort) {
                 console.log(chalk.green(chalk.bold(service.name) + " (" + service.addresses.join(", ") + ")"));
