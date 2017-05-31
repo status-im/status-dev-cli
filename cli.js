@@ -132,11 +132,11 @@ cli.command("add [contact]")
         }
     });
 
-cli.command("remove [contact]")
+cli.command("remove [contactIdentity]")
     .description("Removes a contact")
-    .action(function (contact) {
+    .action(function (contactIdentity) {
         var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-        var contactData = getPackageData(contact);
+        var contactData = getPackageData(JSON.stringify({"whisper-identity": contactIdentity}));
         if (contactData) {
             statusDev.removeContact(contactData, function(err, body) {
                 if (err) {
@@ -150,11 +150,11 @@ cli.command("remove [contact]")
         }
     });
 
-cli.command("refresh [contact]")
+cli.command("refresh [contactIdentity]")
     .description("Refreshes a debuggable contact")
-    .action(function (contact) {
+    .action(function (contactIdentity) {
         var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-        var contactData = getPackageData(contact);
+        var contactData = getPackageData(JSON.stringify({"whisper-identity": contactIdentity}));
         if (contactData) {
             statusDev.refreshContact(contactData, function(err, body) {
                 if (err) {
@@ -208,11 +208,11 @@ cli.command("list")
         });
     });
 
-cli.command("log <identity>")
+cli.command("log <contactIdentity>")
     .description("Returns log for a specified DApp or bot")
-    .action(function (identity) {
+    .action(function (contactIdentity) {
         var statusDev = new StatusDev({ip: cli.ip || defaultIp});
-        statusDev.getLog(identity, function (err, body) {
+        statusDev.getLog(contactIdentity, function (err, body) {
             if (err) {
                 printMan();
             } else if (body === undefined) {
@@ -254,17 +254,15 @@ cli.command("scan")
         browser.start();
     });
 
-cli.command("watch [dir] [contact]")
+cli.command("watch [dir] [contactIdentity]")
     .description("Starts watching for contact changes")
-    .action(function (dir, contact) {
+    .action(function (dir, contactIdentity) {
+        var contact = JSON.stringify({"whisper-identity": contactIdentity});
         var contactData = getPackageData(contact);
         if (!contactData) {
             return;
         }
         contactDir = dir || process.cwd();
-        if (fs.existsSync(contactDir + '/build/')) {
-            contactDir += '/build';
-        }
         console.log("Watching for changes in " + contactDir);
 
         client.capabilityCheck(

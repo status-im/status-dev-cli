@@ -36,16 +36,16 @@ Scans for available Status debug servers and returns IP addresses of them.
 
 #### 3. Removing a contact (DApp or bot)
 
-`status-dev-cli remove [contact]`
+`status-dev-cli remove [whisper-identity]`
 
-* `contact` — JSON containing `whisper-identity` field. It is not required if you develop a DApp and this DApp contains `package.json` file. 
+* `whisper-identity` — the identity of your DApp/bot. It is not required if you develop a DApp and this DApp contains `package.json` file. 
 
 #### 4. Refreshing a DApp automatically
 
-`status-dev-cli watch [dir] [contact]`
+`status-dev-cli watch [dir] [whisper-identity]`
 
 * `dir` — dir that should be observed. Not required;
-* `contact` — JSON containing `whisper-identity` field. It is not required if you develop a DApp and this DApp contains `package.json` file. 
+* `whisper-identity` — the identity of your DApp/bot. It is not required if you develop a DApp and this DApp contains `package.json` file. 
 
 #### 5. Refreshing a DApp manually
 
@@ -53,9 +53,9 @@ Scans for available Status debug servers and returns IP addresses of them.
 
 This command simply reloads the DApp
 
-`status-dev-cli refresh [dapp]`
+`status-dev-cli refresh [whisper-identity]`
 
-* `dapp` — JSON containing `whisper-identity` field. It is not required if your DApp contains `package.json` file.
+* `whisper-identity` — the identity of your DApp/bot. It is not required if your DApp contains `package.json` file.
 
 #### 6. Switching network
 
