@@ -99,10 +99,8 @@ function getPackageData(contact) {
 
 function printMan() {
     console.error(chalk.red("Cannot connect to Status."));
-    console.log("1. Please, ensure that your device is connected to your computer;");
-    console.log("2. If it is connected, ensure that you're logged in and the debug mode is enabled;");
-    console.log("3. If you use Android, you should also execute " +
-        chalk.yellow("adb forward tcp:5561 tcp:5561") + " before using development tools.")
+    console.log("1. Please, ensure that your device is accessible from your computer;");
+    console.log("2. If it is, ensure that you're logged in and the debug mode is enabled;");
     console.log();
     console.log("Check our docs for more information:");
     console.log("http://docs.status.im/");
