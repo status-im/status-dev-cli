@@ -16,9 +16,9 @@ npm i -g status-dev-cli
 
 ## Command Line
 
-**Common additional parameters:**
+**Common parameters:**
 
-* `--ip <device-ip>` to specify your device's IP address. If you don't know your device's IP address, just run `status-dev-cli scan`.
+* `--ip <device-ip>` to specify your device's IP address. If you don't know your device's IP address, just run `status-dev-cli scan`. The IP should be provided for every command you try to execute (except `scan`, of course)
 
 #### 1. Scanning the network
 
@@ -30,19 +30,19 @@ Scans for available Status debug servers and returns IP addresses of them.
 
 #### 2. Adding a contact (DApp or bot)
 
-`status-dev-cli add [contact]`
+`status-dev-cli add [contact] --ip [device ip]`
 
 * `contact` — JSON containing contact information. It is not required if you develop a DApp and this DApp contains `package.json` file. Otherwise, this map should contain `whisper-identity`, `name` and `dapp-url` or `bot-url` fields (see the example in **Scenario** section)
 
 #### 3. Removing a contact (DApp or bot)
 
-`status-dev-cli remove [whisper-identity]`
+`status-dev-cli remove [whisper-identity] --ip [device ip]`
 
 * `whisper-identity` — the identity of your DApp/bot. It is not required if you develop a DApp and this DApp contains `package.json` file. 
 
 #### 4. Refreshing a DApp automatically
 
-`status-dev-cli watch [dir] [whisper-identity]`
+`status-dev-cli watch [dir] [whisper-identity] --ip [device ip]`
 
 * `dir` — dir that should be observed. Not required;
 * `whisper-identity` — the identity of your DApp/bot. It is not required if you develop a DApp and this DApp contains `package.json` file. 
@@ -53,7 +53,7 @@ Scans for available Status debug servers and returns IP addresses of them.
 
 This command simply reloads the DApp
 
-`status-dev-cli refresh [whisper-identity]`
+`status-dev-cli refresh [whisper-identity] --ip [device ip]`
 
 * `whisper-identity` — the identity of your DApp/bot. It is not required if your DApp contains `package.json` file.
 
@@ -65,7 +65,7 @@ Typically when developing DApps, a developer uses his own private chain or a sim
 Status inserts its own web3 object into the DApp, however, this web3 object is connected to a different network than the development one.
 This command allows to switch a network. Next time you login the network will be switched back.
 
-`status-dev-cli switch-node <url>`
+`status-dev-cli switch-node <url> --ip [device ip]`
 
 * `url` (required) — the network that will be used instead of `http://localhost:8545`
 
@@ -75,7 +75,7 @@ This command allows to switch a network. Next time you login the network will be
 
 Displays all debuggable DApps and bots. Can be useful if you don't remember identities of your applications.
 
-`status-dev-cli list`
+`status-dev-cli list --ip [device ip]`
 
 #### 8. Extracting logs
 
@@ -83,7 +83,7 @@ Displays all debuggable DApps and bots. Can be useful if you don't remember iden
 
 Displays the last 100 log messages for the specified bot or DApp.
 
-`status-dev-cli log <whisper-identity>`
+`status-dev-cli log <whisper-identity> --ip [device ip]`
 
 * `whisper-identity` — identity of your DApp or bot.
 
