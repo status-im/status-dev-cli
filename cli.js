@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 const cli = require("commander");
-const child = require('child_process');
 const watchman = require('fb-watchman');
 const fs = require('fs');
-const path = require('path');
-const request = require('request');
 const chalk = require('chalk');
 const mdns = require('mdns');
 
