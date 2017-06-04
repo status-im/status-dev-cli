@@ -20,6 +20,8 @@ npm i -g status-dev-cli
 
 * `--ip <device-ip>` to specify your device's IP address. If you don't know your device's IP address, just run `status-dev-cli scan`. The IP should be provided for every command you try to execute (except `scan`, of course)
 
+Device IP can also be provided using the `STATUS_DEVICE_IP` environment variable (e.g. `STATUS_DEVICE_IP=192.168.0.2 status-dev-cli list`)
+
 #### 1. Scanning the network
 
 ***status-dev-cli 3.2.0+, Status 0.9.8+***
