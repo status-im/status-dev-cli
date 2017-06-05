@@ -1,19 +1,25 @@
 #!/usr/bin/env node
 const cli = require("commander");
-const child = require('child_process');
 const watchman = require('fb-watchman');
 const fs = require('fs');
-const path = require('path');
-const request = require('request');
 const chalk = require('chalk');
 const mdns = require('mdns');
 
 const pkgJson = require(__dirname + '/package.json');
 
 const client = new watchman.Client();
-const defaultIp = "localhost";
+const defaultIp = process.env.STATUS_DEVICE_IP;
 const statusDebugServerPort = 5561;
 const StatusDev = require('./index.js');
+
+function createStatusDev() {
+    const ip = cli.ip || defaultIp;
+    if (ip == null) {
+        console.error(chalk.red("You have provide your device IP using --ip."));
+        process.exit(1);
+    }
+    return new StatusDev({ip: ip});
+}
 
 function fromAscii(str) {
     var hex = "";
@@ -104,7 +110,7 @@ function printServerProblem() {
 cli.command("add [contact]")
     .description("Adds a contact")
     .action(function (contact) {
-        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var statusDev = createStatusDev();
         var contactData = getPackageData(contact);
         if (contactData) {
             statusDev.addContact(contactData, function(err, body) {
@@ -122,7 +128,7 @@ cli.command("add [contact]")
 cli.command("remove [contactIdentity]")
     .description("Removes a contact")
     .action(function (contactIdentity) {
-        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var statusDev = createStatusDev();
 
         var contact = null;
         if (contactIdentity) {
@@ -145,7 +151,7 @@ cli.command("remove [contactIdentity]")
 cli.command("refresh [contactIdentity]")
     .description("Refreshes a debuggable contact")
     .action(function (contactIdentity) {
-        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var statusDev = createStatusDev();
 
         var contact = null;
         if (contactIdentity) {
@@ -168,7 +174,7 @@ cli.command("refresh [contactIdentity]")
 cli.command("switch-node <url>")
     .description("Switches the current RPC node")
     .action(function (url) {
-        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var statusDev = createStatusDev();
         statusDev.switchNode(url, function(err, body) {
             if (err) {
                 printMan();
@@ -183,7 +189,7 @@ cli.command("switch-node <url>")
 cli.command("list")
     .description("Displays all debuggable DApps and bots")
     .action(function () {
-        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var statusDev = createStatusDev();
         statusDev.listDApps(function (err, body) {
             if (err) {
                 printMan();
@@ -208,7 +214,7 @@ cli.command("list")
 cli.command("log <contactIdentity>")
     .description("Returns log for a specified DApp or bot")
     .action(function (contactIdentity) {
-        var statusDev = new StatusDev({ip: cli.ip || defaultIp});
+        var statusDev = createStatusDev();
         statusDev.getLog(contactIdentity, function (err, body) {
             if (err) {
                 printMan();

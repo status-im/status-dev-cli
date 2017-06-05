@@ -14,73 +14,58 @@ var StatusDev = function(options) {
     this.url = "http://" + options.ip + ":5561";
 };
 
-StatusDev.prototype.addContact = function(contactData, cb) {
-    request({
-        url: this.url + "/add-dapp",
+function requestOptions(url, body) {
+    return {
+        url: url,
         method: "POST",
+        timeout: 3000,
         json: true,
-        body: { encoded: fromAscii(contactData) }
-    }, function (error, response, body) {
+        body: body};
+}
+
+StatusDev.prototype.addContact = function(contactData, cb) {
+    request(requestOptions(this.url + "/add-dapp", { encoded: fromAscii(contactData) })
+    , function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
     });
 };
 
 StatusDev.prototype.removeContact = function(contactData, cb) {
-    request({
-        url: this.url + "/remove-dapp",
-        method: "POST",
-        json: true,
-        body: { encoded: fromAscii(contactData) }
-    }, function (error, response, body) {
+    request(requestOptions(this.url + "/remove-dapp", { encoded: fromAscii(contactData) })
+    , function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
     });
 };
 
 StatusDev.prototype.refreshContact = function(contactData, cb) {
-    request({
-        url: this.url + "/dapp-changed",
-        method: "POST",
-        json: true,
-        body: { encoded: fromAscii(contactData) }
-    }, function (error, response, body) {
+    request(requestOptions(this.url + "/dapp-changed", { encoded: fromAscii(contactData) })
+    , function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
     });
 };
 
 StatusDev.prototype.switchNode = function(rpcUrl, cb) {
-    request({
-        url: this.url + "/switch-node",
-        method: "POST",
-        json: true,
-        body: {encoded: fromAscii(JSON.stringify({"url": rpcUrl}))}
-    }, function (error, response, body) {
+    request(requestOptions(this.url + "/switch-node", {encoded: fromAscii(JSON.stringify({"url": rpcUrl}))})
+    , function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
     });
 };
 
 StatusDev.prototype.listDApps = function(cb) {
-    request({
-        url: this.url + "/list",
-        json: true,
-        method: "POST",
-        body: {}
-    }, function (error, response, body) {
+    request(requestOptions(this.url + "/list", {})
+    , function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
     });
 };
 
 StatusDev.prototype.getLog = function(identity, cb) {
-    request({
-        url: this.url + "/log",
-        method: "POST",
-        json: true,
-        body: { identity: identity }
-    }, function (error, response, body) {
+    request(requestOptions(this.url + "/log", { identity: identity })
+    , function (error, response, body) {
         if (cb === undefined) { return }
         cb(error, body);
     });
