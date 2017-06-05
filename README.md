@@ -1,6 +1,6 @@
 # Status CLI
 
-Additional tools for DApps developers. These tools allows to speed up the process of developing DApps for Status.
+Additional tools for DApps developers. These tools allow to speed up the process of developing DApps for Status.
 
 ## Requirements
 
