@@ -10,6 +10,8 @@ Additional tools for DApps developers. These tools allows to speed up the proces
 
 ## Installing
 
+_Caution_ Depending on your OS `mdns` (one of `status-dev-cli` dependencies) might have some prerequisites. Make sure you follow advices from `mdns` [installation](https://github.com/agnat/node_mdns#installation) procedure.
+
 ```
 npm i -g status-dev-cli
 ```
