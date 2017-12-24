@@ -315,5 +315,6 @@ cli.version(pkgJson.version)
     .option("--name [name]", "Name overrides package.json seeing as spaces and caps aren't available there")
     .option("--dappUrl [url]", "Custom DApp URL (overrides the one from the package.json)")
     .option("--botUrl [url]", "Custom bot URL (overrides the one from the package.json)")
+    .option("--whisperIdentity [id]", "Custom Whisper Identity (overrides the one from the package.json")
     .option("--photoPath [url]", "Custom photo for DApp (overrides the one from the package.json)")
     .parse(process.argv);
