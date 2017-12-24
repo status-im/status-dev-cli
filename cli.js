@@ -73,6 +73,7 @@ function getCurrentPackageData() {
         obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
         obj["dapp-url"] = json["dapp-url"] || cli.dappUrl;
         obj["bot-url"] = json["bot-url"] || cli.botUrl;
+        obj["photo-path"] = json["photo-path"] || cli.photoPath;
     }
     return obj;
 }
@@ -313,4 +314,5 @@ cli.version(pkgJson.version)
     .option("--ip [ip]", "IP address of your device")
     .option("--dappUrl [url]", "Custom DApp URL (overrides the one from the package.json)")
     .option("--botUrl [url]", "Custom bot URL (overrides the one from the package.json)")
+    .option("--photoPath [url]", "Custom photo for DApp (overrides the one from the package.json)")
     .parse(process.argv);
