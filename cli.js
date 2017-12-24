@@ -69,11 +69,11 @@ function getCurrentPackageData() {
     var obj = {};
     if (fs.existsSync(process.cwd() + '/package.json')) {
         var json = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
-        obj["name"] = json.name;
-        obj["whisper-identity"] = "dapp-" + fromAscii(json.name);
-        obj["dapp-url"] = json["dapp-url"] || cli.dappUrl;
-        obj["bot-url"] = json["bot-url"] || cli.botUrl;
-        obj["photo-path"] = json["photo-path"] || cli.photoPath;
+        obj["name"] = cli.name || json.name;
+        obj["whisper-identity"] = cli.whisperIdentity || "dapp-" + fromAscii(json.name) ;
+        obj["dapp-url"] = cli.dappUrl || json["dapp-url"];
+        obj["bot-url"] = cli.botUrl || json["bot-url"];
+        obj["photo-path"] = cli.photoPath || json["photo-path"];
     }
     return obj;
 }
@@ -312,6 +312,7 @@ cli.on("*", function(command) {
 
 cli.version(pkgJson.version)
     .option("--ip [ip]", "IP address of your device")
+    .option("--name [name]", "Name overrides package.json seeing as spaces and caps aren't available there")
     .option("--dappUrl [url]", "Custom DApp URL (overrides the one from the package.json)")
     .option("--botUrl [url]", "Custom bot URL (overrides the one from the package.json)")
     .option("--photoPath [url]", "Custom photo for DApp (overrides the one from the package.json)")
