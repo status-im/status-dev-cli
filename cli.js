@@ -253,7 +253,7 @@ cli.command("scan")
             if (service.port == statusDebugServerPort) {
                 console.log(chalk.green(chalk.bold(service.name) + " (" + service.addresses.join(", ") + ")"));
 
-                process.exit(1);
+                process.exit();
             }
         });
         browser.start();
