@@ -15,7 +15,7 @@ const StatusDev = require('./index.js');
 function createStatusDev() {
     const ip = cli.ip || defaultIp;
     if (ip == null) {
-        console.error(chalk.red("You have provide your device IP using --ip."));
+        console.error(chalk.red("You have to provide your device IP using --ip."));
         process.exit(1);
     }
     return new StatusDev({ip: ip});
@@ -255,6 +255,10 @@ cli.command("scan")
             }
         });
         browser.start();
+        
+        setTimeout(function() {
+            process.exit();
+        }, 10000);
     });
 
 cli.command("watch [dir] [contactIdentity]")
